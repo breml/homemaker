@@ -45,7 +45,14 @@ func processEnv(env []string, conf *config) error {
 	case len(args) == 2:
 		value = args[1]
 	default:
-		value = strings.Join(args[1:], ",")
+		if args[1] == "!exec" {
+			var err error
+			if value, err = processCmdWithReturn(args[2:], conf); err != nil {
+				return err
+			}
+		} else {
+			value = strings.Join(args[1:], ",")
+		}
 	}
 
 	if conf.flags&flagVerbose != 0 {
